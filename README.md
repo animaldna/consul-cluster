@@ -1,7 +1,7 @@
 # Consul Cluster on EC2 with TF and Packer
 
 # TODOs
-- [ ] FB.py
+- [x] FB.py
 - [ ] Client cluster + FB exec
 - [ ] misc parameters
 - [ ] security
