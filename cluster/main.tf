@@ -28,14 +28,12 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-module "consul_cluster" {
+module "consul_servers" {
   source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster"
 
-  cluster_name = "snowplow-consul-servers"
-  # TODO - 5, parameterize
-  cluster_size  = 3
+  cluster_name = "demo-consul-servers"
+  cluster_size  = var.cluster_size
   instance_type = "t2.micro"
-  # TODO - redundant?
   cluster_tag_key = var.cluster_tag_key
   cluster_tag_value = var.cluster_tag_value
 
@@ -48,7 +46,24 @@ module "consul_cluster" {
   vpc_id             = data.aws_vpc.default.id
   availability_zones = data.aws_availability_zones.available.names
   allowed_ssh_cidr_blocks = var.allowed_ssh
-  # TODO - lock down
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
   ssh_key_name                = var.ssh_key_name
+}
+
+resource "aws_instance" "demo_client" {
+  ami = data.aws_ami.consul_server.image_id
+  instance_type = "t2.micro"
+  associate_public_ip_address = true
+  iam_instance_profile = module.consul_servers.iam_role_arn
+  user_data = templatefile("../${path.module}/scripts/client_launch.sh", {
+    cluster_tag_key   = var.cluster_tag_key
+    cluster_tag_value = var.cluster_tag_value
+  })
+  tags = {
+    (var.cluster_tag_key) : var.cluster_tag_value
+  }
+}
+
+output "demo_client_ip" {
+  value = aws_instance.demo_client.public_ip
 }

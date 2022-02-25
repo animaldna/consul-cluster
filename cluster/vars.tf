@@ -3,6 +3,11 @@ variable "region" {
   default = "us-east-2"
 }
 
+variable "cluster_size" {
+  type = number
+  default = 3
+}
+
 variable "cluster_tag_key" {
   type    = string
   default = "consul"

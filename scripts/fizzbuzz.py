@@ -19,7 +19,7 @@ def fizzBuzz(start, stop):
             tmp = base64.b64encode(bytes(result, "ascii"))
         kvs.append(
                 {
-                    "key": f"hello/{i}",
+                    "key": f"py/{i}",
                     "value":  tmp.decode('ascii')
                 }
             )

@@ -17,5 +17,5 @@ function fizzBuzz {
 }
 
 for number in {1..100}; do
-    consul kv put hello/$number `fizzBuzz $number`
+    consul kv put bash/$number `fizzBuzz $number`
 done
